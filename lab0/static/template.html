@@ -1,0 +1,102 @@
+
+<!doctype html>
+
+<!--
+about:version template page
+-->
+
+<html id="t" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>PhotoS060</title>
+
+    <!-- <link rel="icon" type="image/png" sizes="32x32" -->
+    <!--     href="chrome://theme/current-channel-logo"> -->
+
+    <link rel="stylesheet" href="static/style.css">
+
+    <!-- <script type ="module" src="about_version.js"></script> -->
+  </head>
+
+  <body>
+    <!-- <div id="alice"> -->
+    <!--   <span class="profile-name">alice</span> -->
+    <!-- </div> -->
+
+    <div id="login-bar"><a href="login">Log in</a></div>
+    <h1>PhotoS060</h1>
+    <div id="outer">
+      <div id="logo">
+
+        <div id="company">Google LLC</div>
+        <div id="copyright">Copyright 2021 Google LLC. All rights reserved.</div>
+      </div>
+      <table id="inner" cellpadding="0" cellspacing="0" border="0">
+        <tr><td class="label">Google Chrome</td>
+          <td class="version" id="version">
+            <span>91.0.4472.106</span>
+            (<span>Official Build</span>)
+            <span></span>
+            <span>(x86_64)</span>
+
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Revision</td>
+          <td class="version">
+            <span>574f7b38e4e7244c92c4675e902e8f8e3d299ea7-refs/branch-heads/4472@{#1477}</span>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">OS</td>
+          <td class="version" id="os_type">
+            <span>macOS Version 11.4 (Build 20F71)</span>
+
+
+            <span id="os_version"></span>
+
+          </td>
+        </tr>
+
+
+
+
+        <tr><td class="label">JavaScript</td>
+          <td class="version" id="js_engine">
+            <span>V8</span>
+            <span>9.1.269.36</span>
+          </td>
+        </tr>
+
+        <tr><td class="label">User Agent</td>
+          <td class="version" id="useragent">Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36</td>
+        </tr>
+        <tr><td class="label">Command Line</td>
+          <td class="version" id="command_line"> /Applications/Google Chrome.app/Contents/MacOS/Google Chrome --flag-switches-begin --flag-switches-end --restore-last-session --origin-trial-disabled-features=SecurePaymentConfirmation</td>
+        </tr>
+
+        <tr><td class="label">Executable Path</td>
+          <td class="version" id="executable_path"></td>
+        </tr>
+        <tr><td class="label">Profile Path</td>
+          <td class="version" id="profile_path"></td>
+        </tr>
+
+        <tr id="variations-section">
+          <td class="label">Variations</td>
+          <td class="version" id="variations-list"></td>
+        </tr>
+        <tr id="variations-cmd-section" hidden>
+          <td class="label">Command-line variations</td>
+          <td class="version-wide" id="variations-cmd"></td>
+        </tr>
+        <tr id="sanitizer-section" hidden>
+          <td class="label">Sanitizer</td>
+          <td class="version" id="sanitizer"></td>
+        </tr>
+
+      </table>
+    </div>
+  </body>
+</html>

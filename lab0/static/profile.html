@@ -1,0 +1,35 @@
+<!doctype html>
+
+<html id="t" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>PhotoS060</title>
+
+    <link rel="stylesheet" href="static/style.css">
+  </head>
+
+  <body>
+    <div id="logout">
+      Logged in as <a href="profile">'$username'</a>.
+      <form method="post" action="logout">
+        <button name="logout">Logout</button>
+      </form>
+    </div>
+
+    <div id="profile-contents">
+      <strong>Profile for '$username'</strong>
+      <form method="post">
+        <div id="profile-fields">
+          $fields
+        </div>
+        <label>Attribute name:
+          <input name="add-key">
+        </label>
+        <label>Attribute value:
+          <input name="add-value">
+        </label>
+        <button name="add-attr" formaction="profile">Add attribute to profile</button>
+      </form>
+    </div>
+  </body>
+</html>
