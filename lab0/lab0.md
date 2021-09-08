@@ -27,4 +27,4 @@ Hints that may be useful to you:
 
 ### To submit lab 0
 
-upload `client.py` to [Gradescope](https://www.gradescope.com/courses/281655).
+upload a ZIP file containing `client.py` to [Gradescope](https://www.gradescope.com/courses/281655/assignments/1473448).
