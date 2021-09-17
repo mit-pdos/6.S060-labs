@@ -1,0 +1,28 @@
+<!doctype html>
+
+<html id="t" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>PhotoS060</title>
+
+    <!-- TODO use fixed Flask static -->
+    <link rel="stylesheet" href="../static/style.css">
+  </head>
+
+  <body>
+    <div id="logout">
+      Logged in as '$username'.
+      <form method="post" action="logout">
+        <button name="logout">Logout</button>
+      </form>
+    </div>
+
+    <div id="photo-contents">
+      <h1>Photo $num</h1>
+      <div id="back-to-photos">
+        <a href="../photos">Back to photos</a>
+      </div>
+      <img src="../static/photo-$num">
+    </div>
+  </body>
+</html>
