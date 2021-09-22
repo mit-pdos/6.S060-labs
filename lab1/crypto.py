@@ -3,6 +3,7 @@
 import secrets 
 import hmac
 import hashlib
+from typing import List
 
 import codec
 
@@ -11,7 +12,7 @@ hash_function = hashlib.sha3_256
 class UserSecret:
     """A user secret used for key generation."""
 
-    def __init__(self, secret=None):
+    def __init__(self, secret: bytes=None):
         """Wrap secret bytes to generate different user keys.
         If none is provided, generate new secret bytes.
         >>> secret = UserSecret()
@@ -23,31 +24,31 @@ class UserSecret:
         self._auth_secret = self._generate_auth_secret()
         self._symmetric_key = self._generate_symmetric_key()
 
-    def _generate_auth_secret(self):
+    def _generate_auth_secret(self) -> bytes:
         h_ctxt = hash_function()
         h_ctxt.update("auth_secret".encode('utf-8'))
         h_ctxt.update(self._secret)
         return h_ctxt.digest()
 
-    def _generate_symmetric_key(self):
+    def _generate_symmetric_key(self) -> bytes:
         h_ctxt = hash_function()
         h_ctxt.update("symmetric_key".encode('utf-8'))
         h_ctxt.update(self._secret)
         return h_ctxt.digest()
 
-    def get_secret(self):
+    def get_secret(self) -> bytes:
         return self._secret
 
-    def get_auth_secret(self):
+    def get_auth_secret(self) -> bytes:
         return self._auth_secret
 
-    def get_symmetric_key(self):
+    def get_symmetric_key(self) -> bytes:
         return self._symmetric_key
 
 class MessageAuthenticationCode:
     """A wrapper for symmetric keys to produce message authentication codes."""
 
-    def __init__(self, symmetric_key=None):
+    def __init__(self, symmetric_key: bytes=None) -> None:
         """Wrap the given symmetric key.
 
         If none is provided, generate a new key.
@@ -59,7 +60,7 @@ class MessageAuthenticationCode:
         else:
             self._secret_key = symmetric_key
 
-    def gen_mac(self, data):
+    def gen_mac(self, data: bytes) -> bytes:
         """Create a message authenticator over the data given the
         symmetric key.
 
@@ -75,7 +76,7 @@ class MessageAuthenticationCode:
             raise TypeError("data must be Encoding")
         return hmac.new(self._secret_key, data.bytes_data, hash_function).digest()
 
-    def compare_mac(self, data, auth):
+    def compare_mac(self, data: bytes, auth: bytes) -> bool:
         """Check the provided message authenticator against the given
         data and secret.
 
@@ -88,6 +89,12 @@ class MessageAuthenticationCode:
         >>> mac = prover.gen_mac(payload)
         >>> prover.compare_mac(payload, mac)
         True
+        >>> payload_2 = codec.Encoding()
+        >>> payload_2.add_bin(b"Helllllo ")
+        >>> payload_2.add_bin("Security!".encode('utf-8'))
+        >>> payload_2.add_int(1)
+        >>> prover.compare_mac(payload_2, mac)
+        False
         """
         return hmac.compare_digest(hmac.new(self._secret_key, data.bytes_data, hash_function).digest(), auth)
 
@@ -115,7 +122,7 @@ class _HashChain:
         self.nodes.append(first_node)
         self.add_hashes(hlist)
 
-    def add_hashes(self, hlist):
+    def add_hashes(self, hlist: List[bytes]) -> None:
         """Add new hashes to the hash chain and compute the new corresponding item hashes.
         """
         for h in hlist:
@@ -124,10 +131,10 @@ class _HashChain:
             h_ctxt.update(h)
             self.nodes.append(h_ctxt.digest())
         
-    def hash(self):
+    def hash(self) -> bytes:
         return self.nodes[-1]
 
-def to_hlist(data):
+def to_hlist(data: List[codec.Encoding]) -> List[bytes]:
     """Convert a list of codec.Encoding to a list of hashes."""
     hlist = []
     for d in data:
@@ -139,12 +146,12 @@ def to_hlist(data):
         hlist.append(h_ctxt.digest())
     return hlist
 
-def _hash_list(hlist):
+def _hash_list(hlist: List[bytes]) -> bytes:
     """Get the hash of a list of hashes."""
     hchain = _HashChain(hlist)
     return hchain.hash()
 
-def list_data_hash(data):
+def list_data_hash(data: List[codec.Encoding]) -> bytes:
     """Hash the given list of codec.Encoding data.
 
     >>> enc = codec.encode_one_int
@@ -154,7 +161,7 @@ def list_data_hash(data):
     hlist = to_hlist(data)
     return _hash_list(hlist)
 
-def verify_list_data_hash(data, output):
+def verify_list_data_hash(data: List[codec.Encoding], output: bytes) -> bool:
     """Verify that the given list of codec.Encoding data corresponds
     to the given hash output.
 

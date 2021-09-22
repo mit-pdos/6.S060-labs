@@ -4,27 +4,13 @@
 A simple codec for encoding arbitrary data as bytes.
 """
 
+from typing import Iterator, Union
+
 BIN_SEPARATOR = b'\x01'
 INT_SEPARATOR = b'\x02'
 
-def encode_one_int(num):
-    """Convenience function for encoding a single int."""
-    if type(num) != int:
-        raise TypeError("argument must be int")
-    enc = Encoding()
-    enc.add_int(num)
-    return enc
-    
-def encode_one_bin(bin_data):
-    """Convenience function for encoding a single bytes object."""
-    if type(bin_data) != bytes:
-        raise TypeError("argument must be bytes")
-    enc = Encoding()
-    enc.add_bin(bin_data)
-    return enc
-    
 class Encoding:
-    def __init__(self, bytes_data=b""):
+    def __init__(self, bytes_data: bytes=b"") -> None:
         """Holds the encoding for a sequence of data, which may
         contain raw bytes or unsigned 64-bit integers.
 
@@ -37,7 +23,7 @@ class Encoding:
         """
         self.bytes_data = bytes_data
 
-    def add_int(self, int_data):
+    def add_int(self, int_data: int) -> None:
         if type(int_data) != int:
             raise TypeError("int_data must be int")
         if int_data > 2**64 - 1:
@@ -57,7 +43,7 @@ class Encoding:
         self.bytes_data += INT_SEPARATOR
         self.bytes_data += bytes(data)
 
-    def add_bin(self, bin_data):
+    def add_bin(self, bin_data: bytes) -> None:
         if type(bin_data) != bytes:
             raise TypeError("bin_data must be bytes")
         self.bytes_data += BIN_SEPARATOR
@@ -65,7 +51,7 @@ class Encoding:
         self.bytes_data += bin_data
 
 
-    def items(self):
+    def items(self) -> Iterator[Union[int, bytes]]:
         copy = Encoding(bytes(self.bytes_data))
         while len(copy.bytes_data) > 0:
             kind = copy.bytes_data[0:1]
@@ -76,7 +62,7 @@ class Encoding:
             else:
                 raise Exception("Found unknown separator {} while decoding".format(kind))
 
-    def _next_int(self):
+    def _next_int(self) -> int:
         assert(self.bytes_data[0:1] == INT_SEPARATOR)
         self.bytes_data = self.bytes_data[1:]
 
@@ -94,7 +80,7 @@ class Encoding:
             (data[7] << (8 * 7)) +
         0)
 
-    def _next_bin(self):
+    def _next_bin(self) -> bytes:
         assert(self.bytes_data[0:1] == BIN_SEPARATOR)
         self.bytes_data = self.bytes_data[1:]
 
@@ -105,6 +91,22 @@ class Encoding:
 
         return data
 
+def encode_one_int(num: int) -> Encoding:
+    """Convenience function for encoding a single int."""
+    if type(num) != int:
+        raise TypeError("argument must be int")
+    enc = Encoding()
+    enc.add_int(num)
+    return enc
+    
+def encode_one_bin(num: int) -> Encoding:
+    """Convenience function for encoding a single bytes object."""
+    if type(num) != bytes:
+        raise TypeError("argument must be bytes")
+    enc = Encoding()
+    enc.add_bin(num)
+    return enc
+    
 
 if __name__ == "__main__":
     import doctest
