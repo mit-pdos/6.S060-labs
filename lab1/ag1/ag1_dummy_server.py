@@ -70,7 +70,7 @@ class Lab1Server:
             for i, item in enumerate(log_entry.data):
                 if type(item) == int and item == 3:
                     log_entry.data[i] = 2
-            self._storage.log_operation(request.username, request.encoded_log_entry)
+            self._storage.log_operation(request.username, log_entry)
         elif self.attack == "change_photo_id_1" and request.photo_id == 3:
             log_entry = request.encoded_log_entry
             # modify all potential photo_ids in log_entry

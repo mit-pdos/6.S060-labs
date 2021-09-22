@@ -15,12 +15,12 @@ def encode_one_int(num):
     enc.add_int(num)
     return enc
     
-def encode_one_bin(num):
+def encode_one_bin(bin_data):
     """Convenience function for encoding a single bytes object."""
-    if type(num) != bytes:
+    if type(bin_data) != bytes:
         raise TypeError("argument must be bytes")
     enc = Encoding()
-    enc.add_bin(num)
+    enc.add_bin(bin_data)
     return enc
     
 class Encoding:
