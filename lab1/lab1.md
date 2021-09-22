@@ -73,6 +73,8 @@ Hints that may be useful to you:
  - We've provided a server which handles requests correctly.  Our autograder's server will not be as cooperative...
    - If you have issues with failing tests, you may find it helpful to inspect and alter the autograder source to assist you in the debugging process.  The autograder lives in the `ag1` subdirectory.
 
+Make sure to keep your solutions private, as per [the course collaboration policy](https://6s060.csail.mit.edu/2021/handouts/info_fall.pdf).  In particular, note that if you make a public fork of this repository on GitHub, any code you write there will also become public, so remember not to put your work into that fork.
+
 ### To submit lab 1
 
 upload a ZIP file containing `client.py` to [Gradescope](https://www.gradescope.com/courses/281655).

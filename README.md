@@ -36,6 +36,8 @@ You can find the tasks for the corresponding assignment by looking at the Markdo
  - [lab4](lab4/lab4.md)
  - [lab5](lab5/lab5.md)
 
+Make sure to keep your solutions private, as per [the course collaboration policy](https://6s060.csail.mit.edu/2021/handouts/info_fall.pdf).  In particular, note that if you make a public fork of this repository on GitHub, any code you write there will also become public, so remember not to put your work into that fork.
+
 ## Contributions
 
 We'd be happy to accept any contributions.  Feel free to issue a PR on [GitHub](https://github.com/mit-pdos/6.S060-labs/compare) and we'll take a look.  If we merge it, let us know if you'd like attribution.
