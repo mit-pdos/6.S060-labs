@@ -1,8 +1,9 @@
 import secrets 
 import codec
 import api
+from server import Server
 
-class DummyServer:
+class DummyServer(Server):
     """A dummy server.  Useful for testing."""
     def __init__(self, database=None):
         self._files = {}

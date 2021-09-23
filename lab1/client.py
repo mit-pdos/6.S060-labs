@@ -4,6 +4,8 @@
 client holds the lab client.
 """
 
+from typing import Union, List, Iterable
+
 from dummy_server import *
 from crypto import *
 import api
@@ -25,7 +27,7 @@ class Client:
     verify the authenticity of an update, clients check the
     authenticator using a shared symmetric key.
     """
-    def __init__(self, username, remote, user_secret=None):
+    def __init__(self, username: str, remote, user_secret: Union[UserSecret, None]=None) -> None:
         """Initialize a client given a username, a
         remote server, and a user secret.
 
@@ -39,11 +41,11 @@ class Client:
         self._remote = remote
 
         self._username = username
-        self._server_session_token = None
+        self._server_session_token: Union[str, None] = None
 
         self._user_secret = UserSecret(user_secret)
 
-        self._auth_secret = self._user_secret.get_auth_secret()
+        self._auth_secret: bytes = self._user_secret.get_auth_secret()
         self._symmetric_auth = MessageAuthenticationCode(self._user_secret.get_symmetric_key())
 
         self._public_profile = api.PublicProfile(username)
@@ -53,7 +55,7 @@ class Client:
         self._last_log_number = 0
 
     @property
-    def username(self):
+    def username(self) -> str:
         """Get the client's username.
 
         >>> server = DummyServer()
@@ -64,7 +66,7 @@ class Client:
         return self._username
 
     @property
-    def user_secret(self):
+    def user_secret(self) -> bytes:
         """Get the client's user secret.
 
         >>> server = DummyServer()
@@ -75,7 +77,7 @@ class Client:
         """
         return self._user_secret.get_secret()
 
-    def register(self):
+    def register(self) -> None:
         """Register this client's username with the server,
         initializing the user's state on the server.
 
@@ -127,7 +129,7 @@ class Client:
             raise Exception(resp)
 
     # TODO login for multiple devices
-    def login(self):
+    def login(self) -> None:
         """Try to login with to the server with the username and
         auth_secret.
 
@@ -169,7 +171,7 @@ class Client:
 
 
 
-    def list_photos(self):
+    def list_photos(self) -> List[int]:
         """Fetch a list containing the photo id of each photo stored
         by the user.
 
@@ -192,7 +194,7 @@ class Client:
 
         return list(range(self._next_photo_id))
 
-    def get_photo(self, photo_id):
+    def get_photo(self, photo_id: int) -> bytes:
         """Get a photo by ID.
 
         >>> server = DummyServer()
@@ -215,7 +217,7 @@ class Client:
             raise errors.PhotoDoesNotExistError(photo_id)
         return self._photos[photo_id]
 
-    def _fetch_photo(self, photo_id):
+    def _fetch_photo(self, photo_id: int) -> None:
         """Get a photo from the server using the unique PhotoID
         >>> server = DummyServer()
         >>> alice = Client("alice", server)
@@ -241,7 +243,7 @@ class Client:
             raise Exception(resp)
         return resp.photo_blob
 
-    def put_photo(self, photo_blob):
+    def put_photo(self, photo_blob: bytes) -> int:
         """Append a photo_blob to the server's database.
 
         On success, this returns the unique photo_id associated with
@@ -276,14 +278,14 @@ class Client:
         self._record_new_photo(photo_blob)
         return photo_id
 
-    def _record_new_photo(self, photo_blob):
+    def _record_new_photo(self, photo_blob: bytes) -> None:
         """A convenience method to add a new photo to client records
         under a tag."""
         self._next_photo_id += 1
         self._photos.append(photo_blob)
         self._last_log_number += 1
 
-    def _synchronize(self):
+    def _synchronize(self) -> None:
         """Synchronize the client's state against the server.
 
         On failure, this raises a SynchronizationError.
@@ -340,16 +342,16 @@ class Client:
         # From here everything has been checked
 
 class LogEntry:
-    def __init__(self, opcode, photo_id):
+    def __init__(self, opcode: api.OperationCode, photo_id: int) -> None:
         self.opcode = opcode
         self.photo_id = photo_id
 
-def encode_log_entry(encoding, log_entry):
+def encode_log_entry(encoding, log_entry: LogEntry) -> codec.Encoding:
     encoding.add_int(log_entry.opcode.value)
     encoding.add_int(log_entry.photo_id)
     return encoding
 
-def decode_log_entry(items_iter):
+def decode_log_entry(items_iter: Iterable) -> LogEntry:
     items = list(items_iter)
     if len(items) != 2:
         raise errors.MalformedEncodingError("expected 2 items but got {} items".format(len(items)))
