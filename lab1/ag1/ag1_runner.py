@@ -182,101 +182,105 @@ def test_double_register_attack_2():
 
 @test_this
 def test_change_photo_id_attack_1():
+    # This test has been deprecated: ignore for lab 1.
     pts = 2
+    return pts
 
-    try:
-        server = Lab1Server(attack="change_photo_id_1")
-        alice = client.Client("alice", server)
-        alice.register()
-        alice.login()
+    # try:
+    #     server = Lab1Server(attack="change_photo_id_1")
+    #     alice = client.Client("alice", server)
+    #     alice.register()
+    #     alice.login()
 
-        photo_blob1 = b'photo1'
-        if alice.put_photo(photo_blob1) != 0:
-            pts -= 1
+    #     photo_blob1 = b'photo1'
+    #     if alice.put_photo(photo_blob1) != 0:
+    #         pts -= 1
         
-        photo_blob2 = b'photo2'
-        if alice.put_photo(photo_blob2) != 1:
-            pts -= 1
+    #     photo_blob2 = b'photo2'
+    #     if alice.put_photo(photo_blob2) != 1:
+    #         pts -= 1
 
-        user_secret = alice.user_secret
-        alicebis = client.Client("alice", server, user_secret)
-        alicebis.login()
+    #     user_secret = alice.user_secret
+    #     alicebis = client.Client("alice", server, user_secret)
+    #     alicebis.login()
 
-        photo_blob3 = b'photo3'
-        if alicebis.put_photo(photo_blob3) != 2:
-            pts -= 1
+    #     photo_blob3 = b'photo3'
+    #     if alicebis.put_photo(photo_blob3) != 2:
+    #         pts -= 1
 
-        photo_blob4 = b'photo4'
-        if alicebis.put_photo(photo_blob4) != 3:
-            pts -= 1
+    #     photo_blob4 = b'photo4'
+    #     if alicebis.put_photo(photo_blob4) != 3:
+    #         pts -= 1
 
-        try:
-            alice.login()
-            photo_blob5 = b'photo5'
-            alice.put_photo(photo_blob5)
-            pts = 0
-        except errors.SynchronizationError: # TODO make check more precise
-            pass
-        except:
-            traceback.print_exc()
-            pts = 0
+    #     try:
+    #         alice.login()
+    #         photo_blob5 = b'photo5'
+    #         alice.put_photo(photo_blob5)
+    #         pts = 0
+    #     except errors.SynchronizationError: # TODO make check more precise
+    #         pass
+    #     except:
+    #         traceback.print_exc()
+    #         pts = 0
 
-        if pts < 0:
-            pts = 0
-        return pts
+    #     if pts < 0:
+    #         pts = 0
+    #     return pts
         
-    except:
-        traceback.print_exc()
-        return 0
+    # except:
+    #     traceback.print_exc()
+    #     return 0
 
 @test_this
 def test_change_photo_id_attack_2():
+    # This test has been deprecated: ignore for lab 1.
     pts = 2
+    return pts
 
-    try:
-        server = Lab1Server(attack="change_photo_id_2")
-        alice = client.Client("alice", server)
-        alice.register()
-        alice.login()
+    # try:
+    #     server = Lab1Server(attack="change_photo_id_2")
+    #     alice = client.Client("alice", server)
+    #     alice.register()
+    #     alice.login()
 
-        photo_blob1 = b'photo1'
-        if alice.put_photo(photo_blob1) != 0:
-            pts -= 1
+    #     photo_blob1 = b'photo1'
+    #     if alice.put_photo(photo_blob1) != 0:
+    #         pts -= 1
         
-        photo_blob2 = b'photo2'
-        if alice.put_photo(photo_blob2) != 1:
-            pts -= 1
+    #     photo_blob2 = b'photo2'
+    #     if alice.put_photo(photo_blob2) != 1:
+    #         pts -= 1
 
-        user_secret = alice.user_secret
-        alicebis = client.Client("alice", server, user_secret)
-        alicebis.login()
+    #     user_secret = alice.user_secret
+    #     alicebis = client.Client("alice", server, user_secret)
+    #     alicebis.login()
 
-        photo_blob3 = b'photo3'
-        if alicebis.put_photo(photo_blob3) != 2:
-            pts -= 1
+    #     photo_blob3 = b'photo3'
+    #     if alicebis.put_photo(photo_blob3) != 2:
+    #         pts -= 1
 
-        photo_blob4 = b'photo4'
-        if alicebis.put_photo(photo_blob4) != 3:
-            pts -= 1
+    #     photo_blob4 = b'photo4'
+    #     if alicebis.put_photo(photo_blob4) != 3:
+    #         pts -= 1
 
-        try:
-            alice.login()
-            photo_blob5 = b'photo5'
-            alice.put_photo(photo_blob5)
-            pts = 0
-        except errors.SynchronizationError: # TODO make check more precise
-            pass
-        except:
-            traceback.print_exc()
-            pts = 0
+    #     try:
+    #         alice.login()
+    #         photo_blob5 = b'photo5'
+    #         alice.put_photo(photo_blob5)
+    #         pts = 0
+    #     except errors.SynchronizationError: # TODO make check more precise
+    #         pass
+    #     except:
+    #         traceback.print_exc()
+    #         pts = 0
 
-        if pts < 0:
-            pts = 0
-        return pts
+    #     if pts < 0:
+    #         pts = 0
+    #     return pts
         
-    except:
-        traceback.print_exc()
-        return 0
+    # except:
+    #     traceback.print_exc()
+    #     return 0
 
 @test_this
 def test_change_photo_order_attack_1():
@@ -376,48 +380,50 @@ def test_version_number_attack_1():
 
 @test_this
 def test_version_number_attack_2():
+    # This test has been deprecated: ignore for lab 1.
     pts = 2
+    return pts
 
-    try:
-        server = Lab1Server(attack="version_number_2")
-        alice = client.Client("alice", server)
-        alice.register()
-        alice.login()
-        photo_blob1 = b'photo1'
-        if alice.put_photo(photo_blob1) != 0:
-            pts -= 1
+    # try:
+    #     server = Lab1Server(attack="version_number_2")
+    #     alice = client.Client("alice", server)
+    #     alice.register()
+    #     alice.login()
+    #     photo_blob1 = b'photo1'
+    #     if alice.put_photo(photo_blob1) != 0:
+    #         pts -= 1
         
-        user_secret = alice.user_secret
-        alicebis = client.Client("alice", server, user_secret)
-        alicebis.login()
+    #     user_secret = alice.user_secret
+    #     alicebis = client.Client("alice", server, user_secret)
+    #     alicebis.login()
 
-        photo_blob2 = b'photo2'
-        if alicebis.put_photo(photo_blob2) != 1:
-            pts -= 1
+    #     photo_blob2 = b'photo2'
+    #     if alicebis.put_photo(photo_blob2) != 1:
+    #         pts -= 1
 
-        alice.login()
-        photo_blob3 = b'photo3'
-        if alice.put_photo(photo_blob2) != 2:
-            pts -= 1
+    #     alice.login()
+    #     photo_blob3 = b'photo3'
+    #     if alice.put_photo(photo_blob2) != 2:
+    #         pts -= 1
         
-        alicebis.login()
-        photo_blob4 = b'photo4'
-        try:
-            alicebis.put_photo(photo_blob4)
-            pts = 0
-        except errors.SynchronizationError: # TODO more precise check
-            pass
-        except:
-            traceback.print_exc()
-            pts = 0
+    #     alicebis.login()
+    #     photo_blob4 = b'photo4'
+    #     try:
+    #         alicebis.put_photo(photo_blob4)
+    #         pts = 0
+    #     except errors.SynchronizationError: # TODO more precise check
+    #         pass
+    #     except:
+    #         traceback.print_exc()
+    #         pts = 0
 
-        if pts < 0:
-            pts = 0
-        return pts
+    #     if pts < 0:
+    #         pts = 0
+    #     return pts
         
-    except:
-        traceback.print_exc()
-        return 0
+    # except:
+    #     traceback.print_exc()
+    #     return 0
 
 @test_this
 def test_change_photo_blob_1():
