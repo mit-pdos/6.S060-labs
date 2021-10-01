@@ -1,0 +1,47 @@
+#logout {
+    float: right;
+    border: 1px solid purple;
+    padding: 10px;
+    background-color: thistle;
+}
+
+#add-photo {
+    text-align: left;
+    border: 1px solid green;
+    padding: 10px;
+    background-color: aquamarine;
+}
+
+#lookup-user {
+    text-align: left;
+    border: 1px solid goldenrod;
+    padding: 10px;
+    background-color: lemonchiffon;
+}
+
+.profile-key {
+    color: maroon;
+    font-weight: bold;
+}
+
+#my-secret {
+    color: red;
+    font-style: italic;
+}
+
+#secret-passphrase {
+    border: 1px solid red;
+    font-family: monospace;
+    background-color: lightgray;
+}
+
+.trusted {
+    border: 1px solid green;
+    font-family: monospace;
+}
+
+.untrusted {
+    border: 1px solid gray;
+    font-family: monospace;
+    background-color: lightgray;
+}

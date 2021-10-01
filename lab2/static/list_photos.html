@@ -1,0 +1,44 @@
+<!doctype html>
+
+<html id="t" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>PhotoS060</title>
+
+    <link rel="stylesheet" href="static/style.css">
+  </head>
+
+  <body>
+    <div id="logout">
+      <div>Logged in as <a href="profile">'$username'</a>.</div>
+      <div><a href="secret"><span id="my-secret">show profile secret</span></a></div>
+      <form method="post" action="switchuser">
+        <button name="switchuser">Switch user</button>
+      </form>
+      <form method="post" action="logout">
+        <button name="logout">Logout</button>
+      </form>
+    </div>
+
+    <div id="lookup-user">
+      <form method="get" action="profile" enctype="multipart/form-data">
+        Lookup a user.
+        <input type="text" name="username">
+        <button name="lookup-user">Lookup</button>
+      </form>
+    </div>
+
+    <div id="add-photo">
+      <form method="post" action="photo" enctype="multipart/form-data">
+        Add a photo.
+        <input type="file" name="photo"
+               accept="image/png, image/jpeg">
+        <button name="submit-photo">Add photo</button>
+      </form>
+    </div>
+
+    <div id="list-photos-contents">
+      $contents
+    </div>
+  </body>
+</html>

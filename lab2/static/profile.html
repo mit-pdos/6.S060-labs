@@ -1,0 +1,41 @@
+<!doctype html>
+
+<html id="t" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>PhotoS060</title>
+
+    <link rel="stylesheet" href="static/style.css">
+  </head>
+
+  <body>
+    <div id="logout">
+      <div>Logged in as <a href="profile">'$myusername'</a>.</div>
+      <div><a href="secret"><span id="my-secret">show profile secret</span></a></div>
+      <form method="post" action="switchuser">
+        <button name="switchuser">Switch user</button>
+      </form>
+      <form method="post" action="logout">
+        <button name="logout">Logout</button>
+      </form>
+    </div>
+
+    <div id="public-key-contents">
+      <strong>'$username' public key:</strong>
+      <div id="public-key-phrase" class="$trustattr">
+        $pubkey
+      </div>
+      $addtrust
+    </div>
+
+    <div id="profile-contents">
+      <strong>Profile for '$username'</strong>
+      <form method="post">
+        <div id="profile-fields">
+          $fields
+        </div>
+        $addfield
+      </form>
+    </div>
+  </body>
+</html>

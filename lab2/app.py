@@ -1,0 +1,291 @@
+#!/usr/bin/env python3
+
+"""
+Local Flask web server to photo client
+"""
+
+from flask import Flask, request, abort, redirect, url_for
+from string import Template
+from markupsafe import escape
+
+from dummy_server import DummyServer
+from client import Client
+import errors
+import wordlist
+
+app = Flask(__name__)
+
+client = None
+remote = DummyServer()
+
+user_secrets = {}
+
+@app.route("/", methods=["GET"])
+def root():
+    if client is None:
+        return redirect(url_for("login"))
+    else:
+        return redirect(url_for("photos"))
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    global client
+
+    if request.method == "GET":
+        return _handle_verbatim("login.html")
+
+    if "username" not in request.form:
+        abort(400)
+
+    username = request.form["username"]
+    if username not in user_secrets:
+        if "password" not in request.form:
+            abort(401)
+
+        passphrase = request.form["password"]
+        try:
+            secret = wordlist.from_words(passphrase.split(' '))
+        except ValueError:
+            abort(401)
+    else:
+        secret = user_secrets[username]
+
+    attempt = Client(username, remote, secret)
+    try:
+        attempt.login()
+        client = attempt
+        return redirect(url_for("photos"))
+    except:
+        abort(401)
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    global client
+    if client is not None and client.username in user_secrets:
+        del(user_secrets[client.username])
+
+    client = None
+    return redirect(url_for("login"))
+
+@app.route("/switchuser", methods=["POST"])
+def switch_user():
+    global client
+
+    client = None
+    return redirect(url_for("login"))
+
+@app.route("/register", methods=["POST"])
+def register():
+    global client
+
+    if "username" not in request.form:
+        abort(400)
+
+    username = request.form["username"]
+    attempt = Client(username, remote)
+    try:
+        attempt.register()
+        client = attempt
+        user_secrets[username] = client.user_secret
+        return redirect(url_for("photos"))
+    except:
+        abort(401)
+
+@app.route("/secret", methods=["GET"])
+def secret():
+    if client is None:
+        return redirect(url_for("login"))
+
+    return _show_secret()
+
+@app.route("/photos", methods=["GET"])
+def photos():
+    if client is None:
+        return redirect(url_for("login"))
+
+    return _list_photos()
+
+@app.route("/photo", methods=["POST"])
+def photo():
+    if client is None:
+        return redirect(url_for("login"))
+
+    if "photo" not in request.files:
+        abort(400)
+
+    data = request.files["photo"].read()
+    if len(data) == 0:
+        abort(400)
+
+    if client.put_photo(data) is None:
+        abort(500)
+
+    return _list_photos()
+
+@app.route("/photo/<num>", methods=["GET"])
+def photo_num(num=-1):
+    if client is None:
+        return redirect(url_for("login"))
+
+    photo = client.get_photo(int(num))
+    if photo is None:
+        abort(404)
+
+    with open("static/photo-{}".format(num), "wb") as f:
+        f.write(photo)
+
+    with open("static/get_photo.html") as f:
+        photo_html = Template(f.read())
+    photo_html = photo_html.substitute(username=escape(client.username),
+                                       num=num)
+    return photo_html
+
+
+def _handle_verbatim(filename):
+    with open("static/"+filename) as f:
+        return f.read()
+
+def _list_photos():
+    photos = client.list_photos()
+    if photos == None:
+        abort(500)
+
+    if len(photos) == 0:
+        contents = "You have no photos yet."
+    else:
+        contents = ""
+        for name in photos:
+            contents += '<a href="photo/{name}">{name}</a>\n'.format(name=name)
+
+    with open("static/list_photos.html") as f:
+        list_html = Template(f.read())
+    list_html = list_html.substitute(username=escape(client.username),
+                                     contents=contents)
+    return list_html
+
+def _show_secret():
+    with open("static/secret.html") as f:
+        secret_html = Template(f.read())
+    secret_html = secret_html.substitute(username=escape(client.username),
+                                         secret=_encode_secret(client.user_secret))
+    return secret_html
+
+def _encode_secret(x):
+    return ' '.join(wordlist.to_words(x))
+
+def _encode_public_key(x):
+    return ' '.join(wordlist.to_words(x))
+
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if client is None:
+        return redirect(url_for("login"))
+
+    username = request.args.get("username")
+    if username is None:
+        username = client.username
+    readonly = True
+    if username == client.username:
+        readonly = False
+
+    infos = {}
+    profile = client.get_friend_public_profile(username)
+    if profile is not None:
+        infos = profile.infos
+
+    if request.method == "POST":
+        if readonly:
+            abort(403)
+
+        if "add-attr" in request.form:
+            if ("add-key" not in request.form or
+                "add-value" not in request.form):
+                abort(400)
+            infos[request.form["add-key"]] = request.form["add-value"]
+            client.update_public_profile_infos(infos)
+        else:
+            order = sorted(list(infos.items()))
+            for attr in request.form:
+                if attr.startswith("del-attr-"):
+                    index = int(attr[len("del-attr-"):])
+                    key = order[index][0]
+                    infos.pop(key)
+                    client.update_public_profile_infos(infos)
+                    break
+
+    fields = ""
+    order = sorted(list(infos.items()))
+    for i, pair in enumerate(order):
+        key = pair[0]
+        deletebutton = ""
+        if not readonly:
+            deletebutton = '<button name="del-attr-{index}" formaction="profile">Delete</button>'.format(index=i)
+
+        fields += '<div id="field-{key}"><span class="profile-key">{key}</span>: {val} {deletebutton}</div>'.format(
+            key=escape(key),
+            val=escape(profile.infos[key]),
+            deletebutton=deletebutton,
+        )
+    if fields == "":
+        fields = '<em>no attributes added yet</em>'
+
+    addfield = ""
+    if not readonly:
+        addfield = """
+        <label>Attribute name:
+          <input name="add-key">
+        </label>
+        <label>Attribute value:
+          <input name="add-value">
+        </label>
+        <button name="add-attr" formaction="profile">Add attribute to profile</button>
+        """
+
+    trust_attr = "trusted"
+    if username == client.username:
+        public_key = client.public_key
+        pubkey_phrase = _encode_public_key(public_key)
+    else:
+        try:
+            public_key = client.get_trusted_user_public_key(username)
+            pubkey_phrase = _encode_public_key(public_key)
+        except errors.InvalidTrustLinkError:
+            public_key = client.get_untrusted_user_public_key(username)
+            if public_key is None:
+                pubkey_phrase = "---"
+            else:
+                pubkey_phrase = _encode_public_key(public_key)
+            trust_attr = "untrusted"
+
+    addtrust = ""
+    if trust_attr == "untrusted":
+        addtrust = """
+      <form method="post" action="trustkey">
+        <input type="hidden" name="username" value="{}">
+        <input type="hidden" name="pubkey" value="{}">
+        <button name="trustkey">Trust this public key from now on</button>
+      </form>
+        """.format(escape(username), pubkey_phrase)
+
+    with open("static/profile.html") as f:
+        profile_html = Template(f.read())
+    profile_html = profile_html.substitute(myusername=escape(client.username),
+                                           username=escape(username),
+                                           pubkey=pubkey_phrase,
+                                           trustattr=trust_attr,
+                                           addtrust=addtrust,
+                                           fields=fields,
+                                           addfield=addfield)
+    return profile_html
+
+@app.route("/trustkey", methods=["POST"])
+def trustkey():
+    if (("pubkey" not in request.form) or
+        ("username" not in request.form)):
+        abort(400)
+
+    words = request.form['pubkey'].split(' ')
+    public_key = wordlist.from_words(words)
+    client.add_contact(request.form['username'], public_key)
+
+    return redirect(url_for("profile") + "?username=" + request.form['username'])
