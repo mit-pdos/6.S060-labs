@@ -8,6 +8,8 @@ import nacl
 
 import codec
 
+# TODO check public key encoding
+
 hash_function = hashlib.sha3_256
 
 class UserSecret:

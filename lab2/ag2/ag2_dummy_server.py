@@ -58,7 +58,7 @@ class Lab2Server:
     def get_contact_book(self, request):
         book = self._storage.get_contact_book(request.username)
         if book is None:
-            api.GetContactBookResponse(api.Errcode.CONTACT_BOOK_DOES_NOT_EXIST, None)
+            return api.GetContactBookResponse(api.Errcode.CONTACT_BOOK_DOES_NOT_EXIST, None)
         return api.GetContactBookResponse(None, book)
 
     def get_trust_link(self, request):
@@ -202,38 +202,13 @@ class DummyStorage:
             return None
         if self._userbase[username].contact_book is None:
             return None
-        return decode_contact_book(self._userbase[username].contact_book)
+        return self._userbase[username].contact_book
 
     def set_contact_book(self, username, book):
         if username not in self._userbase:
             return False
-        self._userbase[username].contact_book = encode_contact_book(book)
+        self._userbase[username].contact_book = book
         return True
-
-def encode_contact_book(book):
-    mappings = []
-    keys = book.keys()
-    for name in keys:
-        pkey = bytes(keys[name][0])
-        if keys[name][1] == None: # TODO clean up this switch
-            data = None
-        else:
-            data = keys[name][1].data
-        mappings.append((name, pkey, data))
-    if book.metadata() is None:
-        return (mappings, None)
-    return (mappings, book.metadata().data)
-
-def decode_contact_book(pair):
-    if pair[1] is None:
-        metadata = None
-    else:
-        metadata = codec.Encoding(pair[1]).items()
-    book = api.ContactBook(metadata)
-    for record in pair[0]:
-        metadata = codec.Encoding(record[2])
-        book.add_contact(record[0], record[1], metadata)
-    return book
 
 if __name__ == "__main__":
     import doctest
