@@ -91,7 +91,7 @@ class Encoding:
             return
         elif type(obj) is list:
             for o in obj:
-                self.add_obj(obj)
+                self.add_obj(o)
         elif type(obj) is int:
             self.add_int(obj)
         elif type(obj) is dict:
