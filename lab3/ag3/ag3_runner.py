@@ -365,7 +365,7 @@ class View:
             else:
                 raise TypeError("type of encoding is not supported")
         if len(self.encryption_stack) != 0:
-            self.decrypt()
+            self._decrypt()
 
 @test_this
 def security_add_friend():
