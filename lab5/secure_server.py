@@ -13,7 +13,7 @@ class VerySecureServer:
             s = request.token
             for i in range(len(self._secret)):
                 if len(s) <= i:
-                    return api.VerifyTokenResponse(True)
+                    return api.VerifyTokenResponse(False)
                 elif s[i] != self._secret[i]:
                     return api.VerifyTokenResponse(False)
             return api.VerifyTokenResponse(True)
